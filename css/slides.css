@@ -1,1 +1,812 @@
-/* فایل slides.css — فعلاً خالی. استایل‌های اسلایدها در main.css هستند */
+/* ═══════════════════════════════════════════════════════════════
+   EWANO B2B — Slides CSS
+   ───────────────────────────────────────────────────────────────
+   • Deck Header (logo, chapter nav, actions)
+   • Stage Container & Slide Layouts
+   • Slide Inner & Typography
+   • Deck Footer (progress, nav, dots)
+   • Drawer (Quick jump menu)
+   • Journey Progress Rail (6 steps)
+   • Step Panels
+   ═══════════════════════════════════════════════════════════════ */
+
+/* =========================================================================
+       TOP HEADER BAR (Persistent Presentation Chrome)
+       ========================================================================= */
+.deck-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 68px;
+      padding: 0 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+      background: rgba(14, 19, 24, 0.78);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-glass);
+    }
+
+.brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+.logo-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--persian-green), var(--persian-green-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px var(--persian-green-glow);
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+.logo-mark:hover {
+      transform: scale(1.06) rotate(-4deg);
+    }
+
+.brand-titles {
+      display: flex;
+      flex-direction: column;
+    }
+
+.brand-titles .main-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+.brand-titles .sub-title {
+      font-size: 11px;
+      color: var(--persian-green);
+      font-weight: 700;
+    }
+
+.co-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      padding: 5px 14px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      color: #CBD5E1;
+      font-weight: 600;
+    }
+
+.co-pill span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--persian-green);
+      box-shadow: 0 0 8px var(--persian-green);
+    }
+
+/* Chapter Pills in Top Bar */
+.chapter-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border-glass);
+    }
+
+.chapter-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-main);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+.chapter-btn:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+.chapter-btn.active {
+      background: var(--persian-green);
+      color: #0B0F13;
+      font-weight: 900;
+      box-shadow: 0 4px 12px var(--persian-green-glow);
+    }
+
+.header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+/* =========================================================================
+       SLIDE STAGE & TRANSITIONS
+       ========================================================================= */
+.stage-container {
+      position: fixed;
+      top: 68px;
+      bottom: 64px;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      overflow: hidden;
+    }
+
+.slide {
+      position: absolute;
+      inset: 0;
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(28px) scale(0.985);
+      transition:
+        opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 0.55s;
+      pointer-events: none;
+      overflow-y: auto;
+    }
+
+.slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+      z-index: 20;
+    }
+
+.slide-inner {
+      width: 100%;
+      max-width: 1440px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+
+/* Staggered Entrance Animations inside active slide */
+.slide.active .anim-up {
+      animation: fadeUpIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+.slide.active .delay-1 { animation-delay: 0.08s; }
+
+.slide.active .delay-2 { animation-delay: 0.16s; }
+
+.slide.active .delay-3 { animation-delay: 0.24s; }
+
+.slide.active .delay-4 { animation-delay: 0.32s; }
+
+.slide.active .delay-5 { animation-delay: 0.40s; }
+
+/* =========================================================================
+       COMMON TYPOGRAPHY & VESSEL HEADERS (Ewano Brand Book p. 38)
+       ========================================================================= */
+.slide-top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+.slide-headline {
+      font-size: clamp(24px, 2.5vw, 36px);
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.3;
+      letter-spacing: -0.3px;
+    }
+
+.slide-headline .accent-green { color: var(--persian-green); }
+
+.slide-headline .accent-orange { color: var(--persian-orange); }
+
+.slide-subtitle {
+      font-size: clamp(13.5px, 1.1vw, 16px);
+      color: #CBD5E1;
+      line-height: 1.75;
+      max-width: 960px;
+    }
+
+.brand-tile {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-glass);
+      border-radius: 16px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+.brand-tile::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--brand-color, var(--persian-green));
+    }
+
+.brand-tile:hover {
+      transform: translateY(-4px) scale(1.02);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--brand-color, var(--persian-green));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+.brand-tile-name {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #FFFFFF;
+    }
+
+.brand-tile-cat {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+/* =========================================================================
+       CREDIT JOURNEY STEPPER SLIDES (Slides 10 to 15 - 1 Step Per Slide!)
+       ========================================================================= */
+.journey-progress-rail {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      padding: 12px 16px;
+      border-radius: 18px;
+    }
+
+.rail-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      opacity: 0.55;
+      transition: all 0.25s ease;
+      border: 1px solid transparent;
+    }
+
+.rail-step:hover {
+      opacity: 0.85;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+.rail-step.done {
+      opacity: 0.85;
+      color: var(--persian-green);
+    }
+
+.rail-step.current {
+      opacity: 1;
+      background: linear-gradient(135deg, rgba(0, 212, 180, 0.2), rgba(0, 212, 180, 0.05));
+      border-color: var(--persian-green);
+      box-shadow: 0 6px 20px rgba(0, 212, 180, 0.2);
+    }
+
+.rail-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+.rail-step.current .rail-num {
+      background: var(--persian-green);
+      color: #0B0F13;
+      box-shadow: 0 0 12px var(--persian-green);
+    }
+
+.rail-step.done .rail-num {
+      background: rgba(0, 212, 180, 0.25);
+      color: var(--persian-green);
+    }
+
+.rail-label {
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+.step-hero-panel {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+.step-visual-box {
+      background: radial-gradient(circle at center, rgba(0, 212, 180, 0.14) 0%, rgba(17, 24, 31, 0.95) 75%);
+      border: 1px solid var(--border-green);
+      border-radius: 24px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+/* =========================================================================
+       BOTTOM NAVIGATION BAR & PROGRESS
+       ========================================================================= */
+.deck-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      padding: 0 36px;
+      background: rgba(14, 19, 24, 0.86);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+
+.progress-track {
+      position: absolute;
+      top: -3px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+.progress-fill {
+      height: 100%;
+      width: 5%;
+      background: linear-gradient(90deg, var(--persian-orange), var(--persian-green));
+      box-shadow: 0 0 12px var(--persian-green);
+      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+.slide-counter-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #E2E8F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+.slide-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+.slide-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+.slide-dot:hover {
+      background: rgba(0, 212, 180, 0.6);
+    }
+
+.slide-dot.active {
+      width: 26px;
+      background: var(--persian-green);
+      box-shadow: 0 0 10px var(--persian-green);
+    }
+
+.slide-dot.journey-dot.active {
+      background: var(--persian-orange);
+      box-shadow: 0 0 10px var(--persian-orange);
+    }
+
+/* =========================================================================
+       SLIDE DRAWER OVERLAY (Quick Jump Menu)
+       ========================================================================= */
+.drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: flex-start;
+    }
+
+.drawer-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+.drawer-panel {
+      width: 420px;
+      max-width: 90vw;
+      height: 100%;
+      background: #121820;
+      border-left: 1px solid var(--border-glass);
+      padding: 28px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+.drawer-backdrop.open .drawer-panel {
+      transform: translateX(0);
+    }
+
+.drawer-item {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-glass);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+.drawer-item:hover, .drawer-item.active {
+      border-color: var(--persian-green);
+      background: var(--persian-green-soft);
+    }
+
+.drawer-item-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 12px;
+      color: var(--persian-green);
+      flex-shrink: 0;
+    }
+
+.drawer-item.active .drawer-item-num {
+      background: var(--persian-green);
+      color: #0B0F13;
+    }
+
+/* =========================================================================
+       REQUIREMENT 6: LARGER HEADINGS & ICONIC HOVER-TO-EXPAND BOXES
+       ========================================================================= */
+.slide-headline {
+      font-size: clamp(30px, 3.1vw, 46px) !important;
+      font-weight: 900 !important;
+      line-height: 1.28 !important;
+      letter-spacing: -0.4px;
+    }
+
+.brand-tile-name {
+      font-size: 16px !important;
+      font-weight: 900 !important;
+    }
+
+/* Exceptions where explicit top-and-bottom alignment is required */
+.slide3-equal-grid,
+    .slide7-aligned-grid,
+    .calc-grid-layout {
+      align-items: stretch !important;
+    }
+
+/* Slide 3 Equal Size Boxes */
+.slide3-equal-card {
+      min-height: 250px;
+      height: 100%;
+    }
+
+/* Slide 7 Top & Bottom Alignment */
+.slide7-aligned-grid {
+      align-items: stretch !important;
+    }
+
+.slide7-right-box {
+      height: 100%;
+    }
+
+.slide7-left-stack {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+.ux-step-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-size: 15.5px;
+      font-weight: 900;
+      color: #FFFFFF;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+    }
+
+.ux-step-pill.ux-step-final {
+      background: var(--persian-green);
+      color: #0B0F13;
+      border-color: var(--persian-green);
+      box-shadow: 0 8px 22px var(--persian-green-glow);
+    }
+
+.ux-step-arrow {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--persian-green);
+      line-height: 1;
+    }
+
+/* =========================================================================
+       USER REQUEST UPDATES (1 - 13)
+       ========================================================================= */
+/* Item 4: Larger and more readable hover text across all cards */
+.glass-card p,
+    .glass-card ul,
+    .glass-card .hover-reveal,
+    .service-tile p,
+    .step-hero-panel p,
+    .calc-side-card p {
+      font-size: 14.5px !important;
+      line-height: 1.85 !important;
+      color: #E2E8F0 !important;
+    }
+
+/* Item 8: Larger and more readable fonts in Chapter 2 (Credit Journey Slides 11 to 16) */
+.slide[data-chapter="2"] p {
+      font-size: 16.5px !important;
+      line-height: 2 !important;
+    }
+
+.slide[data-chapter="2"] .grid-2 div,
+    .slide[data-chapter="2"] .grid-3 div,
+    .slide[data-chapter="2"] ul li {
+      font-size: 14.5px !important;
+      line-height: 1.9 !important;
+    }
+
+.slide[data-chapter="2"] h2 {
+      font-size: clamp(26px, 2.4vw, 34px) !important;
+    }
+
+.rail-step .rail-label {
+      font-size: 13.5px !important;
+      font-weight: 800 !important;
+    }
+
+.rail-num {
+      width: 32px !important;
+      height: 32px !important;
+      font-size: 14px !important;
+    }
+
+.slide[data-chapter="0"] .ecosystem-layout {
+      grid-template-columns: 1.12fr 0.88fr !important;
+    }
+
+.slide[data-chapter="0"] svg text {
+      font-size: 13px !important;
+    }
+
+/* Item 7: Slide 5 Brand Logo Slots */
+.brand-logo-slot {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(255,255,255,0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      padding: 3px;
+      margin-left: 8px;
+      overflow: hidden;
+    }
+
+.brand-logo-slot img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+.brand-logo-slot.placeholder-brand {
+      background: rgba(255,255,255,0.1);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+.brand-tile {
+      padding: 10px 12px !important;
+    }
+
+.brand-tile-name {
+      flex: 1;
+      font-size: 13.5px !important;
+    }
+
+.brand-logo-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px !important;
+      border-radius: 12px !important;
+      font-size: 13.5px !important;
+      font-weight: 800;
+      background: rgba(255,255,255,0.06) !important;
+      border: 1px solid rgba(255,255,255,0.14) !important;
+    }
+
+.pill-brand-logo {
+      width: 24px;
+      height: 24px;
+      object-fit: contain;
+      background: #FFFFFF;
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+.pill-brand-placeholder {
+      width: 24px;
+      height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,212,180,0.2);
+      color: var(--persian-green);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+/* Item 4: White background for ALL logo boxes across all pages */
+.comp-logo-box,
+    .brand-logo-slot,
+    .pill-brand-logo,
+    .client-circle-logo,
+    .client-logo-box,
+    .logo-dot {
+      background: #FFFFFF !important;
+    }
+
+/* Item 4: Slide 2 Equal 3-Columns in Companies Grid */
+.slide[data-chapter="0"] .companies-grid {
+      display: grid !important;
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 10px !important;
+    }
+
+.slide[data-chapter="0"] .companies-grid .company-pill {
+      height: 52px;
+      box-sizing: border-box;
+    }
+
+.brands-25-grid .brand-tile {
+      padding: 16px 18px !important;
+      border-radius: 18px !important;
+      min-height: 72px;
+    }
+
+.brands-25-grid .brand-logo-slot {
+      width: 52px !important;
+      height: 52px !important;
+      border-radius: 14px !important;
+      padding: 6px !important;
+      margin-left: 14px !important;
+    }
+
+.brands-25-grid .brand-tile-name {
+      font-size: 18px !important;
+      font-weight: 900 !important;
+    }
+
+.brands-25-grid .brand-tile-cat {
+      font-size: 13px !important;
+      padding: 4px 10px !important;
+      border-radius: 10px !important;
+    }
+
+.slide[data-title="دموی تعاملی سوپراپلیکیشن اوانو و سه بالانس سازمانی"] .demo-slide-grid {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 32px !important;
+      align-items: stretch !important;
+      margin-top: 10px !important;
+    }
+
+.slide[data-title="دموی تعاملی سوپراپلیکیشن اوانو و سه بالانس سازمانی"] .demo-left-col {
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: space-between !important;
+      height: 100% !important;
+      gap: 16px !important;
+    }
+
+.slide[data-title="دموی تعاملی سوپراپلیکیشن اوانو و سه بالانس سازمانی"] .demo-left-col .glass-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 24px 28px !important;
+    }
+
+/* Item 9: Chapter 3 6-Step Visual Box Texts 2X Larger */
+.step-visual-box {
+      padding: 32px 24px !important;
+    }
+
+.step-visual-box text {
+      font-size: 16px !important;
+    }
+
+.step-visual-box div:nth-of-type(1) {
+      font-size: 20px !important;
+      font-weight: 900 !important;
+      margin-top: 14px !important;
+    }
+
+.step-visual-box div:nth-of-type(2) {
+      font-size: 15px !important;
+      font-weight: 700 !important;
+      margin-top: 6px !important;
+    }
+
