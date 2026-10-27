@@ -1,3 +1,14 @@
+/* ═══════════════════════════════════════════════════════════════
+   EWANO B2B — Navigation & Slide Engine
+   ───────────────────────────────────────────────────────────────
+   • goToSlide / nextSlide / prevSlide
+   • Chapter navigation
+   • Keyboard controls (←/→/F/Esc)
+   • Slide dots
+   • Drawer (quick jump)
+   • Fullscreen
+   ═══════════════════════════════════════════════════════════════ */
+
 [{"key":"Alborz","fa":"البرز","center":"کرج","stores":450,"n":6},{"key":"Ardabil","fa":"اردبیل","center":"اردبیل","stores":65,"n":10},{"key":"Bushehr","fa":"بوشهر","center":"بوشهر","stores":110,"n":10},{"key":"ChaharmahalandBakhtiari","fa":"چهارمحال و بختیاری","center":"شهرکرد","stores":45,"n":9},{"key":"EastAzerbaijan","fa":"آذربایجان شرقی","center":"تبریز","stores":420,"n":20},{"key":"Fars","fa":"فارس","center":"شیراز","stores":480,"n":29},{"key":"Gilan","fa":"گیلان","center":"رشت","stores":280,"n":16},{"key":"Golestan","fa":"گلستان","center":"گرگان","stores":85,"n":14},{"key":"Hamadan","fa":"همدان","center":"همدان","stores":80,"n":9},{"key":"Hormozgan","fa":"هرمزگان","center":"بندرعباس","stores":190,"n":12},{"key":"Ilam","fa":"ایلام","center":"ایلام","stores":25,"n":9},{"key":"Isfahan","fa":"اصفهان","center":"اصفهان","stores":550,"n":24},{"key":"Kerman","fa":"کرمان","center":"کرمان","stores":220,"n":23},{"key":"Kermanshah","fa":"کرمانشاه","center":"کرمانشاه","stores":210,"n":14},{"key":"Khuzestan","fa":"خوزستان","center":"اهواز","stores":350,"n":27},{"key":"KohgiluyehAndBoyerAhmad","fa":"کهگیلویه و بویراحمد","center":"یاسوج","stores":30,"n":8},{"key":"Kurdistan","fa":"کردستان","center":"سنندج","stores":90,"n":10},{"key":"Lorestan","fa":"لرستان","center":"خرم‌آباد","stores":70,"n":11},{"key":"Markazi","fa":"مرکزی","center":"اراک","stores":140,"n":13},{"key":"Mazandaran","fa":"مازندران","center":"ساری","stores":170,"n":22},{"key":"NorthKhorasan","fa":"خراسان شمالی","center":"بجنورد","stores":40,"n":8},{"key":"Qazvin","fa":"قزوین","center":"قزوین","stores":150,"n":6},{"key":"Qom","fa":"قم","center":"قم","stores":240,"n":1},{"key":"RazaviKhorasan","fa":"خراسان رضوی","center":"مشهد","stores":700,"n":28},{"key":"Semnan","fa":"سمنان","center":"سمنان","stores":50,"n":8},{"key":"SistanAndBaluchestan","fa":"سیستان و بلوچستان","center":"زاهدان","stores":100,"n":19},{"key":"SouthKhorasan","fa":"خراسان جنوبی","center":"بیرجند","stores":35,"n":11},{"key":"Tehran","fa":"تهران","center":"تهران","stores":3200,"n":16},{"key":"WestAzerbaijan","fa":"آذربایجان غربی","center":"ارومیه","stores":160,"n":17},{"key":"Yazd","fa":"یزد","center":"یزد","stores":180,"n":10},{"key":"Zanjan","fa":"زنجان","center":"زنجان","stores":55,"n":9}]
 
 // ═════════════════════════════════
@@ -370,163 +381,9 @@ const slides = Array.from(document.querySelectorAll('.slide'));
 
 
     // =========================================================================
-    // REQUIREMENT 3: PURCHASE CREDIT CALCULATOR ENGINE
-    // Formula from نحوه محاسبه اقساط اعتبار.docx:
-    // مبلغ هر قسط = (اصل مبلغ اعتبار مصرفی / تعداد اقساط) + (اصل مبلغ اعتبار مصرفی * درصد کارمزد)
-    // تعداد اقساط: 4، 6، 12، 18، 24 | درصد کارمزد: متغیر (پیش‌فرض 1.9%)
-    // =========================================================================
-    (function(){
-      var root = document.getElementById('creditCalc');
-      if (!root) return;
-      var FA = '۰۱۲۳۴۵۶۷۸۹';
-      function fa(n){
-        return Math.round(n).toLocaleString('en-US').replace(/,/g, '٬').replace(/[0-9]/g, function(d){ return FA[+d]; });
-      }
-      function faDec(n){
-        return String(n).replace('.', '٫').replace(/[0-9]/g, function(d){ return FA[+d]; });
-      }
-      var INSTALLMENT_OPTIONS = [4, 6, 12, 18, 24];
-      var amountEl = document.getElementById('calcAmount');
-      var countIdxEl = document.getElementById('calcCountIdx');
-      var feeRateEl = document.getElementById('calcFeeRate');
-      var feeInputEl = document.getElementById('calcFeeInput');
+    
 
-      function renderTicks(r, customLabels){
-        var box = r.parentNode.querySelector('.calc-ticks');
-        if (!box) return;
-        var min = +r.min, max = +r.max, step = +r.step;
-        var n = customLabels ? customLabels.length : Math.round((max - min) / step) + 1;
-        if (box.children.length !== n) {
-          box.textContent = '';
-          for (var k = 0; k < n; k++) {
-            var d = document.createElement('i'), b = document.createElement('b');
-            b.textContent = customLabels ? customLabels[k] : fa((min + k * step) / 1e6);
-            d.appendChild(b);
-            box.appendChild(d);
-          }
-        }
-        for (var j = 0; j < n; j++) {
-          var v = customLabels ? j : (min + j * step);
-          var curVal = +r.value;
-          box.children[j].className = v < curVal ? 'on' : Math.abs(v - curVal) < 0.001 ? 'cur' : '';
-        }
-      }
 
-      function renderFeeTicks(r){
-        var box = r.parentNode.querySelector('.calc-ticks');
-        if (!box) return;
-        var marks = [0, 1, 1.9, 3, 4];
-        if (box.children.length !== marks.length) {
-          box.textContent = '';
-          marks.forEach(function(m){
-            var d = document.createElement('i'), b = document.createElement('b');
-            b.textContent = faDec(m) + '٪';
-            d.appendChild(b);
-            box.appendChild(d);
-          });
-        }
-        var cur = +r.value;
-        marks.forEach(function(m, idx){
-          box.children[idx].className = m < cur ? 'on' : Math.abs(m - cur) < 0.05 ? 'cur' : '';
-        });
-      }
-
-      function updateTrackFill(r, mode){
-        var f = (+r.value - +r.min) / (+r.max - +r.min);
-        var t = r.parentNode;
-        t.style.setProperty('--f', f);
-        if (mode === 'amount') renderTicks(r, null);
-        else if (mode === 'count') renderTicks(r, ['۴ ماهه', '۶ ماهه', '۱۲ ماهه', '۱۸ ماهه', '۲۴ ماهه']);
-        else if (mode === 'fee') renderFeeTicks(r);
-      }
-
-      function updateCalculator(){
-        var principal = +amountEl.value;
-        var count = INSTALLMENT_OPTIONS[+countIdxEl.value] || 12;
-        var feePct = +feeRateEl.value;
-        var rate = feePct / 100;
-
-        // Exact formula from نحوه محاسبه اقساط اعتبار.docx:
-        // مبلغ هر قسط = (اصل مبلغ اعتبار مصرفی / تعداد اقساط) + (درصد کارمزد * اصل مبلغ اعتبار مصرفی)
-        var basePerMonth = principal / count;
-        var feePerMonth = principal * rate;
-        var installment = basePerMonth + feePerMonth;
-        var totalRepayment = installment * count;
-
-        updateTrackFill(amountEl, 'amount');
-        updateTrackFill(countIdxEl, 'count');
-        updateTrackFill(feeRateEl, 'fee');
-
-        document.getElementById('calcAmountOut').innerHTML = fa(principal) + '<small>تومان</small>';
-        document.getElementById('calcCountOut').innerHTML = fa(count) + '<small>قسط ماهانه</small>';
-        document.getElementById('calcFeeOut').innerHTML = faDec(feePct.toFixed(1).replace(/\.0$/, '')) + '<small>٪ ماهانه</small>';
-
-        document.getElementById('calcInst').textContent = fa(installment);
-        document.getElementById('calcFormulaText').textContent =
-          '(' + principal.toLocaleString('en-US') + ' ÷ ' + count + ') + (' + principal.toLocaleString('en-US') + ' × ' + feePct + '%) = ' + Math.round(installment).toLocaleString('en-US');
-
-        document.getElementById('calcResBase').textContent = fa(basePerMonth) + ' تومان';
-        document.getElementById('calcResFee').textContent = feePct > 0 ? (fa(feePerMonth) + ' تومان') : 'بدون کارمزد (۰ تومان)';
-        document.getElementById('calcResCount').textContent = fa(count) + ' ماهه · کارمزد ' + faDec(feePct) + '٪';
-        document.getElementById('calcResTotal').textContent = fa(totalRepayment) + ' تومان';
-      }
-
-      amountEl.addEventListener('input', updateCalculator);
-      countIdxEl.addEventListener('input', updateCalculator);
-      feeRateEl.addEventListener('input', function(){
-        feeInputEl.value = feeRateEl.value;
-        updateCalculator();
-      });
-      feeInputEl.addEventListener('input', function(){
-        var v = parseFloat(feeInputEl.value);
-        if (!isNaN(v) && v >= 0 && v <= 10) {
-          feeRateEl.value = Math.min(4, Math.max(0, v));
-          var principal = +amountEl.value;
-          var count = INSTALLMENT_OPTIONS[+countIdxEl.value] || 12;
-          var basePerMonth = principal / count;
-          var feePerMonth = principal * (v / 100);
-          var installment = basePerMonth + feePerMonth;
-          updateTrackFill(feeRateEl, 'fee');
-          document.getElementById('calcFeeOut').innerHTML = faDec(v) + '<small>٪ ماهانه</small>';
-          document.getElementById('calcInst').textContent = fa(installment);
-          document.getElementById('calcResFee').textContent = v > 0 ? (fa(feePerMonth) + ' تومان') : 'بدون کارمزد';
-          document.getElementById('calcResCount').textContent = fa(count) + ' ماهه · کارمزد ' + faDec(v) + '٪';
-          document.getElementById('calcResTotal').textContent = fa(installment * count) + ' تومان';
-        }
-      });
-
-      window.setCalcPreset = function(amt, cIdx, fee){
-        amountEl.value = amt;
-        countIdxEl.value = cIdx;
-        feeRateEl.value = fee;
-        feeInputEl.value = fee;
-        updateCalculator();
-      };
-
-      updateCalculator();
-    })();
-
-    // =========================================================================
-    // REQUIREMENT 4: INTERACTIVE APP DEMO ENGINE (PWA + ewano-b2b-deck.html)
-    // =========================================================================
-    (function(){
-      var demoTabs = document.querySelectorAll('.demo-tab');
-      var prevScreen = 'ph-home';
-      function showPhoneScreen(id){
-        var cur = document.querySelector('.ph-screen.active');
-        if (cur && cur.id !== id) prevScreen = cur.id;
-        demoTabs.forEach(function(t){ t.classList.toggle('active', t.dataset.screen === id); });
-        document.querySelectorAll('.ph-screen').forEach(function(s){ s.classList.toggle('active', s.id === id); });
-      }
-      window.showPhoneScreen = showPhoneScreen;
-      window.phoneBack = function(){ showPhoneScreen(prevScreen); };
-      demoTabs.forEach(function(tab){
-        tab.addEventListener('click', function(){ showPhoneScreen(tab.dataset.screen); });
-      });
-      document.querySelectorAll('.ph-nav a[data-tab]').forEach(function(a){
-        a.addEventListener('click', function(){ showPhoneScreen(a.dataset.tab); });
-      });
-    })();
 
     // Wallet Cards in Phone Demo (Synced with user's logged-in PWA session balances)
     var walletCards = [
