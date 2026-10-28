@@ -217,4 +217,12 @@ body, button, input, select, textarea, svg text, .phone-screen, .city-lbl, .city
       from { transform: translateX(0); }
       to { transform: translateX(-50%); }
     }
-
+.stage-container {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 88px;    /* ارتفاع هدر */
+  padding-bottom: 88px; /* ارتفاع فوتر */
+  overflow: hidden;
+}

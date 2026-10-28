@@ -4,6 +4,7 @@
    • بارگذاری داینامیک اسلایدها از پوشه slides/
    • رندر درون main#stageContainer
    • ارسال رویداد slidesLoaded برای هماهنگی با navigation.js
+   • اسلایدهای گم‌شده نادیده گرفته می‌شن (بدون پیام خطا در UI)
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -40,31 +41,59 @@
   async function loadSlide(file) {
     try {
       const response = await fetch(BASE_PATH + file);
-      if (!response.ok) throw new Error(`فایل ${file} پیدا نشد.`);
+      if (!response.ok) {
+        // ❌ خطا رو فقط توی کنسول لاگ کن، به DOM چیزی اضافه نکن
+        console.warn(`[SlidesLoader] ${file} پیدا نشد (HTTP ${response.status}) — نادیده گرفته شد`);
+        return null;
+      }
       return await response.text();
     } catch (err) {
-      console.error(`[SlidesLoader] خطا در بارگذاری ${file}:`, err);
-      return `<div class="glass-card" style="padding:40px; text-align:center; color:#F16273;">
-                <h3>خطا در بارگذاری اسلاید</h3>
-                <p>${file}</p>
-              </div>`;
+      // ❌ خطای شبکه یا CORS — فقط لاگ کن
+      console.warn(`[SlidesLoader] ${file} بارگذاری نشد — نادیده گرفته شد:`, err.message);
+      return null;
     }
   }
 
   async function initSlides() {
-    if (!container) return;
+    if (!container) {
+      console.error('[SlidesLoader] #stageContainer پیدا نشد!');
+      return;
+    }
 
-    // بارگذاری موازی (برای سرعت بیشتر)
+    // بارگذاری موازی
     const results = await Promise.all(SLIDES_MANIFEST.map(loadSlide));
 
-    // پاک کردن لودر و قرار دادن اسلایدها
-    container.innerHTML = results.join('');
+    // ✅ فیلتر کردن اسلایدهای گم‌شده (null)
+    const validSlides = results.filter(html => html !== null);
+    const missingCount = results.length - validSlides.length;
+
+    // اگه هیچ اسلایدی لود نشد، پیام خطا بده
+    if (validSlides.length === 0) {
+      container.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:center; height:100%; color:#F16273; font-family:Vazirmatn; text-align:center; padding:40px;">
+          <div>
+            <h2 style="margin-bottom:12px;">اسلایدی بارگذاری نشد</h2>
+            <p style="color:#94A3B8;">لطفاً با سرور محلی اجرا کن: <code style="background:#1F2933; padding:4px 10px; border-radius:6px;">python -m http.server 8000</code></p>
+          </div>
+        </div>`;
+      console.error('[SlidesLoader] هیچ اسلایدی بارگذاری نشد!');
+      window.dispatchEvent(new Event('slidesLoaded'));
+      return;
+    }
+
+    // تزریق اسلایدها
+    container.innerHTML = validSlides.join('');
 
     // تنظیم اسلاید اول به‌عنوان active
     const firstSlide = container.querySelector('.slide');
     if (firstSlide) firstSlide.classList.add('active');
 
-    console.log(`✅ ${SLIDES_MANIFEST.length} اسلاید با موفقیت بارگذاری شد.`);
+    // لاگ نهایی
+    if (missingCount > 0) {
+      console.warn(`⚠️ ${validSlides.length} اسلاید بارگذاری شد — ${missingCount} فایل پیدا نشد (نادیده گرفته شد)`);
+    } else {
+      console.log(`✅ ${validSlides.length} اسلاید با موفقیت بارگذاری شد.`);
+    }
 
     // ارسال رویداد برای navigation.js
     window.dispatchEvent(new Event('slidesLoaded'));

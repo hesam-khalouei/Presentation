@@ -1,19 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════
    EWANO B2B — Bootstrap & Initialization
    ───────────────────────────────────────────────────────────────
-   این فایل بعد از همه اسکریپت‌ها لود می‌شه و مسئول:
-     • اطمینان از وجود اسلاید فعال
-     • بررسی صحت توابع اصلی
-     • مدیریت resize برای recalibration
-     • مدیریت visibility برای pause/resume
-     • لاگ نهایی در حالت debug
-
-   ترتیب لود (در index.html):
-     1. navigation.js  → توابع اسلاید
-     2. calculator.js  → ماشین‌حساب
-     3. demo.js        → دمو PWA
-     4. animations.js  → انیمیشن (اختیاری)
-     5. main.js        → این فایل
+   • اطمینان از وجود اسلاید فعال
+   • بررسی صحت توابع اصلی
+   • مدیریت resize و visibility
+   • منتظر لود شدن اسلایدها و کامپوننت‌ها می‌مونه
    ═══════════════════════════════════════════════════════════════ */
 
 (function () {
@@ -22,9 +13,8 @@
   // ═══════════════════════════════════════════
   // ۱) تنظیمات
   // ═══════════════════════════════════════════
-
   const CONFIG = {
-    DEBUG: false,                  // ← production: false, development: true
+    DEBUG: false,
     REQUIRED_FNS: [
       'goToSlide',
       'nextSlide',
@@ -42,20 +32,20 @@
   // ═══════════════════════════════════════════
   // ۲) Utilities
   // ═══════════════════════════════════════════
-
   const log = {
     info(msg) {
       if (CONFIG.DEBUG) {
-        console.log(`%c[Ewano]%c ${msg}`,
+        console.log(
+          `%c[Ewano]%c ${msg}`,
           'background:#00D4B4;color:#0B0F13;padding:2px 6px;border-radius:4px;font-weight:bold;',
-          'color:inherit;');
+          'color:inherit;'
+        );
       }
     },
     warn(msg) {
       if (CONFIG.DEBUG) console.warn(`[Ewano] ${msg}`);
     },
     error(msg) {
-      // خطاها همیشه نشون داده می‌شن
       console.error(`[Ewano] ${msg}`);
     },
     summary(count) {
@@ -79,19 +69,15 @@
   // ═══════════════════════════════════════════
   // ۳) Bootstrap Steps
   // ═══════════════════════════════════════════
-
   function ensureActiveSlide() {
     const slides = document.querySelectorAll('.slide');
     if (slides.length === 0) {
-      log.error('هیچ اسلایدی پیدا نشد!');
       return null;
     }
-
     if (!document.querySelector('.slide.active')) {
       slides[0].classList.add('active');
-      log.info(`اسلاید اول به عنوان active تنظیم شد`);
+      log.info('اسلاید اول به عنوان active تنظیم شد');
     }
-
     return slides;
   }
 
@@ -117,7 +103,6 @@
       clearTimeout(timer);
       timer = setTimeout(() => {
         log.info(`viewport: ${window.innerWidth}×${window.innerHeight}`);
-        // در آینده: recalibration logic
       }, 200);
     });
   }
@@ -126,10 +111,8 @@
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         log.info('صفحه مخفی شد — pause');
-        // در آینده: pause animations
       } else {
         log.info('صفحه دوباره نمایان شد — resume');
-        // در آینده: resume animations
       }
     });
   }
@@ -138,7 +121,6 @@
     window.addEventListener('error', (event) => {
       log.error(`خطای JS: ${event.message} در ${event.filename}:${event.lineno}`);
     });
-
     window.addEventListener('unhandledrejection', (event) => {
       log.error(`Promise rejection: ${event.reason}`);
     });
@@ -147,45 +129,65 @@
   // ═══════════════════════════════════════════
   // ۴) Main Bootstrap
   // ═══════════════════════════════════════════
-
   function bootstrap() {
     log.info('شروع bootstrap...');
 
-    // ۴.۱ بررسی DOM
     if (!checkRequiredDOM()) {
       log.warn('برخی از عناصر DOM اصلی پیدا نشدن');
     }
 
-    // ۴.۲ فعال‌سازی اسلاید اول
     const slides = ensureActiveSlide();
-    if (!slides) return;
+    if (!slides) {
+      log.error('هیچ اسلایدی پیدا نشد — bootstrap متوقف شد');
+      return;
+    }
 
-    // ۴.۳ بررسی توابع
     const fnsOk = checkRequiredFns();
     if (!fnsOk) {
       log.warn('برخی از توابع اصلی تعریف نشدن');
     }
 
-    // ۴.۴ event listeners
     setupResizeHandler();
     setupVisibilityHandler();
     setupErrorBoundary();
 
-    // ۴.۵ لاگ نهایی
     log.summary(slides.length);
-
     log.info('bootstrap کامل شد ✅');
   }
 
   // ═══════════════════════════════════════════
-  // ۵) اجرا
+  // ۵) اجرا — منتظر اسلایدها می‌مونه
   // ═══════════════════════════════════════════
+  let hasRun = false;
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bootstrap);
-  } else {
-    // DOM از قبل آماده‌ست
+  function startBootstrap() {
+    if (hasRun) return;
+    hasRun = true;
+
+    // اگه اسلایدها هنوز لود نشدن، صبر کن
+    if (document.querySelectorAll('.slide').length === 0) {
+      log.info('اسلایدها هنوز لود نشدن — منتظر slidesLoaded...');
+      window.addEventListener('slidesLoaded', () => {
+        log.info('slidesLoaded دریافت شد — اجرای bootstrap');
+        bootstrap();
+      }, { once: true });
+
+      // fallback: بعد از ۵ ثانیه اگه هنوز خبری نشد
+      setTimeout(() => {
+        if (!hasRun) return;
+        if (document.querySelectorAll('.slide').length === 0) {
+          log.error('اسلایدها لود نشدن — bootstrap اجرا نمی‌شه');
+        }
+      }, 5000);
+      return;
+    }
+
     bootstrap();
   }
 
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startBootstrap);
+  } else {
+    startBootstrap();
+  }
 })();

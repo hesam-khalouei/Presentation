@@ -6,9 +6,7 @@
   'use strict';
 
   const COMPONENTS = [
-    { file: 'header.html', target: '#headerSlot' },
-    { file: 'footer.html', target: '#footerSlot' },
-    { file: 'drawer.html', target: '#drawerSlot' }
+  { file: 'drawer.html', target: '#drawerSlot' }
   ];
 
   async function loadComponent({ file, target }) {
@@ -35,3 +33,9 @@
     initComponents();
   }
 })();
+async function initComponents() {
+  await Promise.all(COMPONENTS.map(loadComponent));
+  console.log('✅ Header, Footer, Drawer بارگذاری شدند.');
+  window.componentsLoadedFlag = true;  // ← این خط رو اضافه کن
+  window.dispatchEvent(new Event('componentsLoaded'));
+}
